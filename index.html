@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket = io.connect('http://localhost');
+      var handleRun = function() {
+        socket.emit('run')
+      };
+      var handleKill = function() {
+        socket.emit('kill')
+      };
+    </script>
+  </head>
+  <body>
+    <button onclick="handleRun()">Run</button>
+    <button onclick="handleKill()">Kill</button>
+    <div id='log'></div>
+    <script>
+      socket.on('proc', function (data) {
+        console.log(data);
+        var entry = document.createElement('div')
+        entry.innerHTML = data;
+        document.body.appendChild(entry);
+      });
+    </script>
+  </body>
+</html>
+
