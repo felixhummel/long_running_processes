@@ -1,0 +1,2 @@
+foo:
+	node server.js
