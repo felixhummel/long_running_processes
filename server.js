@@ -16,12 +16,11 @@ var logConnectionEvents = function(conn, name) {
   logEvents(conn, name, ['connect', 'data', 'end', 'timeout', 'drain', 'error', 'close']);
 };
 var logStreamEvents = function(stream, name) {
-  logEvents(stream, name, ['drain', 'error', 'close', 'pipe']);
+  logEvents(stream, name, ['data', 'drain', 'error', 'close', 'pipe']);
 };
 
 http.createServer(function (req, res) {
   res.writeHead(200, {
-    'Content-Type': 'text/plain',
     'transfer-encoding': 'chunked'
   });
   logStreamEvents(req, 'Request Stream');
@@ -30,13 +29,18 @@ http.createServer(function (req, res) {
   logConnectionEvents(res.connection, 'Response Connection');
 
   proc = child_process.spawn('./example_process');
-  proc.stdout.setEncoding('utf8');
-  proc.stdout.pipe(res, {'end': false});
 
+  logStreamEvents(proc.stdout, 'STDOUT');
+  util.pump(proc.stdout, res);
+  /*
+  proc.stdout.on('data', function(data) {
+    res.write(data);
+  });
+  */
   req.connection.on('end', function() {
-    console.log('reqConn end');
     res.end();
     proc.kill();
+    console.log('=============================================================');
   });
 
 
