@@ -1,0 +1,11 @@
+#!/bin/bash
+# vim: set fileencoding=utf-8 filetype=sh :
+
+TICKRATE=0.5
+
+let i=0
+while [[ true ]]; do
+  echo $i
+  (( i++ ))
+  sleep $TICKRATE
+done
